@@ -1,240 +1,570 @@
 <template>
-  <div>
+  <div class="flex flex-col min-h-screen">
     <!-- Warning for browsers that do not support WebSerial API -->
-    <div v-if="!isWebSerialSupported" class="unsupported-browser-warning">
+    <div
+      v-if="!isWebSerialSupported"
+      class="unsupported-browser-warning"
+    >
       <p>{{ $t('browser_warning') }}</p>
     </div>
     <Head>
       <Title>{{ $t('title') }}</Title>
-      <Meta name="description" :content="$t('description')" />
+      <Meta
+        name="description"
+        :content="$t('description')"
+      />
     </Head>
 
-    <section id="main" class="text-gray-400 body-font px-5">
-      <transition name="flash" mode="out-in">
-        <div class="container py-1 mx-auto transition duration-900 ease-in-out" v-show="!serialMonitorStore.isConnected">
+    <section
+      id="main"
+      class="flex-1 text-gray-400 body-font px-3 sm:px-5"
+    >
+      <transition
+        name="flash"
+        mode="out-in"
+      >
+        <div
+          v-show="!serialMonitorStore.isConnected"
+          class="container py-1 mx-auto transition duration-900 ease-in-out max-w-7xl"
+        >
           <div class="flex flex-col content-center justify-center">
             <div class="flex flex-wrap sm:flex-row flex-col py-1">
               <LogoHeader />
             </div>
-            <hr class="w-full mx-auto mb-4 border-gray-600" />
+            <div class="header-accent-container">
+              <div class="header-accent-line"></div>
+            </div>
           </div>
-          <div class="flex flex-wrap sm:-m-4 -mx-4 -mb-10 -mt-4">
-            <div class="p-4 md:w-1/3 sm:mb-0 mb-6">
-              <div class="rounded-lg h-80 overflow-hidden flex flex-col items-center display-inline">
-                <img :src="selectedDeviceImage" class="h-64 w-64 mb-6 mx-auto" :alt="$t('device.title')" />
+          <div class="flex flex-wrap sm:-m-4 -mx-2 sm:-mx-4 -mb-10 -mt-4">
+            <div class="p-2 sm:p-4 md:w-1/3 sm:mb-0 mb-6 animate-fade-in-up">
+              <div class="card-modern p-6 h-80 flex flex-col items-center relative">
+                <div class="absolute top-3 left-3 w-8 h-8 rounded-full step-badge-circle flex items-center justify-center">
+                  <span class="step-number">1</span>
+                </div>
+                <img
+                  :src="selectedDeviceImage"
+                  class="h-40 w-40 mb-4 mx-auto object-contain drop-shadow-lg"
+                  :alt="$t('device.title')"
+                >
                 <Device />
               </div>
-              <h2 class="text-xl font-medium title-font text-white mt-5">{{ $t('device.title') }}</h2>
-              <p class="text-base leading-relaxed mt-2">
+              <h2 class="text-xl sm:text-xl font-semibold title-doto text-theme mt-5 tracking-wide">
+                {{ $t('device.title') }}
+              </h2>
+              <p class="text-sm sm:text-base leading-relaxed mt-2 text-theme-muted">
                 {{ $t('device.instructions') }}
               </p>
             </div>
-            <div class="p-4 md:w-1/3 sm:mb-0 mb-6">
-              <div class="rounded-lg h-80 flex flex-col items-center">
-                <FolderArrowDownIcon class="h-60 w-60 p-5 mt-10 mb-10 mx-auto text-white" :alt="$t('firmware.title')" />
+            <div class="p-2 sm:p-4 md:w-1/3 sm:mb-0 mb-6 animate-fade-in-up-delayed">
+              <div class="card-modern p-6 h-80 flex flex-col items-center z-20 relative">
+                <div
+                  class="absolute top-3 left-3 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300"
+                  :class="isStep2Enabled ? 'step-badge-circle' : 'border step-disabled'"
+                >
+                  <span
+                    class="font-bold text-sm transition-colors duration-300"
+                    :class="isStep2Enabled ? 'step-number' : 'text-theme-muted'"
+                  >2</span>
+                </div>
+                <FolderDown
+                  class="h-40 w-40 p-4 mb-4 mx-auto card-icon opacity-90"
+                  :alt="$t('firmware.title')"
+                />
                 <Firmware />
               </div>
-              <h2 class="text-xl font-medium title-font text-white mt-5">{{ $t('firmware.title') }}</h2>
-              <p class="text-base leading-relaxed mt-2">
+              <h2 class="text-xl sm:text-xl font-semibold title-doto text-theme mt-5 tracking-wide">
+                {{ $t('firmware.title') }}
+              </h2>
+              <p class="text-sm sm:text-base leading-relaxed mt-2 text-theme-muted">
                 {{ $t('firmware.instructions') }}
               </p>
             </div>
-            <div class="p-4 md:w-1/3 sm:mb-0 mb-6">
-              <div class="rounded-lg h-80 overflow-hidden flex flex-col items-center">
-                <BoltIcon class="h-60 w-60 p-5 mt-10 mb-10 mx-auto text-white" />
+            <div class="p-2 sm:p-4 md:w-1/3 sm:mb-0 mb-6 animate-fade-in-up-delayed-2">
+              <div class="card-modern p-6 h-80 flex flex-col items-center relative">
+                <div
+                  class="absolute top-3 left-3 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300"
+                  :class="isStep3Enabled ? 'step-badge-circle' : 'border step-disabled'"
+                >
+                  <span
+                    class="font-bold text-sm transition-colors duration-300"
+                    :class="isStep3Enabled ? 'step-number' : 'text-theme-muted'"
+                  >3</span>
+                </div>
+                <Zap class="h-40 w-40 p-4 mb-4 mx-auto card-icon opacity-90" />
                 <Flash />
               </div>
-              <h2 class="text-xl font-medium title-font text-white mt-5">Flash</h2>
-              <p class="text-base leading-relaxed mt-2">
+              <h2 class="text-xl sm:text-xl font-semibold title-doto text-theme mt-5 tracking-wide">
+                Flash
+              </h2>
+              <p class="text-sm sm:text-base leading-relaxed mt-2 text-theme-muted">
                 {{ $t('flash.instructions') }}
               </p>
             </div>
           </div>
         </div>
       </transition>
-      <div class="flex max-sm:flex-col justify-center gap-1 mt-4">
-        <button type="button" v-if="!serialMonitorStore.isConnected" @click="monitorSerial" class="bottom-button border-meshtastic text-meshtastic">
-          {{ $t('buttons.serial_monitor') }} <CommandLineIcon class="h-4 w-4 shrink-0" />
+      <div class="flex flex-wrap justify-center gap-2 mt-8">
+        <button
+          v-if="!serialMonitorStore.isConnected"
+          type="button"
+          class="btn-secondary"
+          @click="monitorSerial"
+        >
+          {{ $t('buttons.serial_monitor') }} <Terminal class="h-4 w-4 shrink-0" />
         </button>
-        <a href="https://meshtastic.org/docs" v-if="!serialMonitorStore.isConnected" class="bottom-button border-meshtastic text-meshtastic">
-          {{ $t('buttons.meshtastic_docs') }} <BookOpenIcon class="h-4 w-4 shrink-0" />
+        <a
+          v-if="!serialMonitorStore.isConnected"
+          href="https://meshtastic.org/docs"
+          class="btn-secondary"
+        >
+          {{ $t('buttons.meshtastic_docs') }} <BookOpen class="h-4 w-4 shrink-0" />
         </a>
-        <a href="https://github.com/meshtastic/web-flasher" v-if="!serialMonitorStore.isConnected" class="bottom-button border-meshtastic text-meshtastic">
+        <a
+          v-if="!serialMonitorStore.isConnected"
+          href="https://github.com/meshtastic/web-flasher"
+          class="btn-secondary"
+        >
           {{ $t('buttons.contribute') }}
-          <svg width="20" height="20" viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-current shrink-0">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z" />
-          </svg>
+          <Github class="w-4 h-4 shrink-0" />
         </a>
         <LanguagePicker v-if="!serialMonitorStore.isConnected" />
+        <ThemeSwitcher v-if="!serialMonitorStore.isConnected" />
       </div>
     </section>
 
     <SerialMonitor />
 
-    <footer id="footer" class="halloween-theme footer text-white mt-4 py-4">
-      <canvas>
-        <div class="container mx-auto px-5 py-4 text-center">
-          <p>
-            Powered by
-            <a href="https://vercel.com/?utm_source=meshtastic&utm_campaign=oss">▲ Vercel</a>
-            | Meshtastic® is a registered trademark of Meshtastic LLC. |
-            <a href="https://meshtastic.org/docs/legal">Legal Information</a>.
-          </p>
-        </div>
-      </canvas>
+    <ToastNotifications />
+
+    <footer
+      id="footer"
+      class="footer-modern text-theme mt-8 py-6"
+    >
+      <div class="container mx-auto px-3 sm:px-5 py-2 sm:py-4 text-center">
+        <p class="text-xs sm:text-sm text-theme-muted">
+          Powered by
+          <a href="https://vercel.com/?utm_source=meshtastic&utm_campaign=oss" class="link-theme">▲ Vercel</a>
+          <span class="mx-2 text-theme-muted/50">•</span>
+          Meshtastic® is a registered trademark of Meshtastic LLC.
+          <span class="mx-2 text-theme-muted/50">•</span>
+          <a href="https://meshtastic.org/docs/legal" class="link-theme">Legal Information</a>
+        </p>
+      </div>
     </footer>
-    <div class="fixed -end-4 bottom-6 group">
-      <button type="button" :disabled="true" 
-        :class="{ 
-          'text-purple-400 border-purple-400 animate-pulse': serialMonitorStore.isConnected && !serialMonitorStore.isReaderLocked,
-          'border-meshtastic text-meshtastic animate-pulse': (serialMonitorStore.isConnected && serialMonitorStore.isReaderLocked) || firmwareStore.isConnected,
-          'border-gray-700 text-gray-300': !isConnected
-        }" 
-        class="inline border focus:ring-4 focus:outline-none font-medium rounded-lg text-xs px-4 py-1 text-center me-2 mb-2 backdrop-blur-sm hover:shadow transition duration-300 ease-in-out">
-        {{ connectionButtonLabel }}
-        <span v-if="serialMonitorStore.isConnected && !serialMonitorStore.isReaderLocked" class="inline-flex w-2 h-2 me-2 bg-purple-400 rounded-full"></span>
-        <span v-else-if="isConnected" class="inline-flex w-2 h-2 me-2 bg-green-500 rounded-full"></span>
-        <span v-else class="inline-flex w-2 h-2 me-2 bg-gray-300 rounded-full"></span>
+    <!-- Konami Code Visual Feedback -->
+    <div class="fixed inset-x-0 bottom-0 h-32 pointer-events-none z-40">
+      <transition-group
+        name="key-fly"
+        tag="div"
+        class="relative w-full h-full"
+      >
+        <div
+          v-for="keyEntry in activeKonamiKeys"
+          :key="keyEntry.id"
+          class="key-animation"
+        >
+          <div
+            class="key-display"
+            :class="{ 'key-failed': keyEntry.failed }"
+          >
+            {{ getKeyDisplay(keyEntry.key) }}
+          </div>
+        </div>
+      </transition-group>
+    </div>
+
+    <div v-show="isConnected" class="fixed right-2 sm:right-4 top-4 sm:top-6 group z-[10000]">
+      <button
+        type="button"
+        :disabled="true"
+        :class="{
+          'border-purple-400/50 bg-purple-500/10': serialMonitorStore.isConnected && !serialMonitorStore.isReaderLocked,
+          'border-meshtastic/50 bg-meshtastic/10': (serialMonitorStore.isConnected && serialMonitorStore.isReaderLocked) || firmwareStore.isConnected,
+          'connection-status-disconnected': !isConnected,
+        }"
+        class="inline-flex items-center gap-2 border backdrop-blur-md font-medium rounded-xl text-xs px-3 sm:px-4 py-2 text-center shadow-lg transition-all duration-300"
+      >
+        <span
+          :class="{
+            'text-purple-400': serialMonitorStore.isConnected && !serialMonitorStore.isReaderLocked,
+            'text-meshtastic': (serialMonitorStore.isConnected && serialMonitorStore.isReaderLocked) || firmwareStore.isConnected,
+            'connection-status-disconnected-text': !isConnected,
+          }"
+        >
+          {{ connectionButtonLabel }}
+        </span>
+        <span
+          v-if="serialMonitorStore.isConnected && !serialMonitorStore.isReaderLocked"
+          class="status-dot bg-purple-400"
+          style="box-shadow: 0 0 10px rgba(192, 132, 252, 0.6);"
+        />
+        <span
+          v-else-if="isConnected"
+          class="status-dot status-dot-connected"
+        />
+        <span
+          v-else
+          class="status-dot status-dot-disconnected"
+        />
       </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import 'flowbite';
-import { useI18n } from 'vue-i18n';
-const { t } = useI18n();
-import { onMounted } from 'vue';
-
 import {
   initAccordions,
   initDrawers,
   initDropdowns,
   initModals,
-  initTooltips,
-} from 'flowbite';
+  initTooltips } from 'flowbite'
+import { useI18n } from 'vue-i18n'
+import { onMounted } from 'vue'
 
 import {
-  BoltIcon,
-  BookOpenIcon,
-  CommandLineIcon,
-  FolderArrowDownIcon,
-} from '@heroicons/vue/24/solid';
+  Zap,
+  BookOpen,
+  Terminal,
+  FolderDown,
+  Github,
+} from 'lucide-vue-next'
 
-import { useDeviceStore } from './stores/deviceStore';
-import { useFirmwareStore } from './stores/firmwareStore';
-import { useSerialMonitorStore } from './stores/serialMonitorStore';
+import { useDeviceStore } from './stores/deviceStore'
+import { useFirmwareStore } from './stores/firmwareStore'
+import { useSerialMonitorStore } from './stores/serialMonitorStore'
+import { useThemeStore } from './stores/themeStore'
 
-const serialMonitorStore = useSerialMonitorStore();
-const firmwareStore = useFirmwareStore();
-const deviceStore = useDeviceStore();
+const { t } = useI18n()
 
-const monitorSerial = () => {
-  serialMonitorStore.monitorSerial();
-};
+const serialMonitorStore = useSerialMonitorStore()
+const firmwareStore = useFirmwareStore()
+const deviceStore = useDeviceStore()
+const themeStore = useThemeStore()
+
+const monitorSerial = async () => {
+  await serialMonitorStore.monitorSerial()
+}
 
 const selectedDeviceImage = computed(() => {
   if (deviceStore.selectedTarget?.images?.length) {
-    return `/img/devices/${deviceStore.selectedTarget.images[0]}`;
+    return `/img/devices/${deviceStore.selectedTarget.images[0]}`
   }
-  return '/img/devices/unknown.svg';
-});
+  return themeStore.isDark ? '/img/devices/unknown-new.svg' : '/img/devices/unknown-new-light.svg'
+})
 
 const connectionButtonLabel = computed(() => {
   if (firmwareStore.isFlashing) {
-    return t('state.flashing');
+    return t('state.flashing')
   }
   if ((serialMonitorStore.isConnected && !serialMonitorStore.isReaderLocked) || (firmwareStore.isConnected && !firmwareStore.isReaderLocked)) {
-    return t('state.disconnecting');
+    return t('state.disconnecting')
   }
-  return isConnected.value ? t('state.connected') : t('state.disconnected');
-});
+  return isConnected.value ? t('state.connected') : t('state.disconnected')
+})
 
 const isConnected = computed(() => {
-  return serialMonitorStore.isConnected || firmwareStore.isConnected;
-});
+  return serialMonitorStore.isConnected || firmwareStore.isConnected
+})
+
+// Step enabled states for visual feedback
+const isStep2Enabled = computed(() => {
+  return (deviceStore.selectedTarget?.hwModel ?? 0) > 0
+})
+
+const isStep3Enabled = computed(() => {
+  const hasDevice = (deviceStore.selectedTarget?.hwModel ?? 0) > 0
+  const hasFirmware = firmwareStore.hasFirmwareFile || firmwareStore.hasOnlineFirmware
+  return hasDevice && hasFirmware
+})
 
 // WebSerial API support check
 const isWebSerialSupported = computed(() => {
-  return 'serial' in navigator;
-});
-const konamiKeys = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
-const konamiCodeIndex = ref(0);
+  return 'serial' in navigator
+})
+
+const konamiKeys = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a']
+const konamiCodeIndex = ref(0)
+const activeKonamiKeys = ref([])
+let konamiKeyId = 0
+
+const getKeyDisplay = (key) => {
+  const keyMap = {
+    'ArrowUp': '↑',
+    'ArrowDown': '↓',
+    'ArrowLeft': '←',
+    'ArrowRight': '→',
+    'b': 'B',
+    'a': 'A',
+  }
+  return keyMap[key] || key
+}
+
 window.addEventListener('keydown', (event) => {
   if (event.key === konamiKeys[konamiCodeIndex.value]) {
-    console.log('konami code key match', konamiCodeIndex.value);
-    konamiCodeIndex.value++;
+    console.log('konami code key match', konamiCodeIndex.value)
+    
+    // Add key to animation queue with unique ID
+    const keyToDisplay = konamiKeys[konamiCodeIndex.value]
+    const keyEntry = { key: keyToDisplay, id: konamiKeyId++ }
+    activeKonamiKeys.value.push(keyEntry)
+    setTimeout(() => {
+      const idx = activeKonamiKeys.value.findIndex(k => k.id === keyEntry.id)
+      if (idx > -1) activeKonamiKeys.value.splice(idx, 1)
+    }, 1000)
+    
+    konamiCodeIndex.value++
     if (konamiCodeIndex.value === konamiKeys.length) {
       console.log('Unlocking pre-release section')
-      document.body.classList.add('konami-code');
-      document.getElementById('main').classList.add('konami-code');
-      document.getElementById('footer').classList.add('konami-code');
-      firmwareStore.$state.prereleaseUnlocked = true;
-      konamiCodeIndex.value = 0;
+      document.body.classList.add('konami-code')
+      document.getElementById('main').classList.add('konami-code')
+      document.getElementById('footer').classList.add('konami-code')
+      firmwareStore.$state.prereleaseUnlocked = true
+      konamiCodeIndex.value = 0
     }
-  } else {
-    konamiCodeIndex.value = 0;
   }
-});
+  else {
+    // Only show failed key if we were already in the sequence
+    if (konamiCodeIndex.value > 0) {
+      const keyEntry = { key: event.key, id: konamiKeyId++, failed: true }
+      activeKonamiKeys.value.push(keyEntry)
+      setTimeout(() => {
+        const idx = activeKonamiKeys.value.findIndex(k => k.id === keyEntry.id)
+        if (idx > -1) activeKonamiKeys.value.splice(idx, 1)
+      }, 1000)
+    }
+    konamiCodeIndex.value = 0
+  }
+})
 
 onMounted(() => {
-  initDropdowns();
-  initModals();
-  initTooltips();
-  initDrawers();
-  initAccordions();
-});
+  initDropdowns()
+  initModals()
+  initTooltips()
+  initDrawers()
+  initAccordions()
+  themeStore.initTheme()
+})
 </script>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..1000&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Doto:wght@600;700&display=swap');
+  /* Additional Atkinson Hyperlegible fallback */
+  @font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('https://fonts.gstatic.com/s/atkinsonhyperlegible/v11/9Bt23C1KxNDXMspQ1lPyU89-1h6ONRlW45GE.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('https://fonts.gstatic.com/s/atkinsonhyperlegible/v11/9Bt43C1KxNDXMspQ1lPyU89-1h6ONRlW45G055LkgA.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+  :root {
+    --bg-color: #1e1f2a;
+    --text-color: #FFFFFF;
+    --primary-color: #67EA94;
+    --secondary-color: #67EA94;
+  }
+  :root[data-theme="light"] {
+    --primary-color: #1A9B4A;
+    --secondary-color: #1A9B4A;
+  }
   body {
-    font-family: 'Inter', sans-serif;
-    background-color: #2C2D3C;
+    font-family: 'Atkinson Hyperlegible', 'Lato', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
   }
   .konami-code {
-    background-color: #000000 !important;
-    /* Firefox */
-    -moz-transition: all 1s ease-in;
-    /* WebKit */
-    -webkit-transition: all 1s ease-in;
-    /* Opera */
-    -o-transition: all 1s ease-in;
-    /* Standard */
-    transition: all 1s ease-in;
+    background: linear-gradient(
+      -45deg,
+      #000a00,
+      #0a2a0a,
+      #001a00,
+      #0a1a0a,
+      #000a0a,
+      #000a00
+    ) !important;
+    background-size: 400% 400% !important;
+    animation: konamiGradient 8s ease infinite !important;
+    /* Smooth transition for background change */
+    transition: background 1.5s cubic-bezier(0.4, 0, 0.2, 1), 
+                color 1.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
-  .invert { 
+  
+  /* Light mode konami - use light retro background */
+  :root[data-theme="light"] .konami-code {
+    background: linear-gradient(
+      -45deg,
+      #e8f5e9,
+      #f1f8f1,
+      #eff7ef,
+      #e6f4e6,
+      #e8f2e8,
+      #e8f5e9
+    ) !important;
+    color: #1a3a1a !important;
+  }
+  
+  :root[data-theme="light"] .konami-code,
+  :root[data-theme="light"] .konami-code * {
+    color: #1a3a1a !important;
+    text-shadow: none !important;
+  }
+  
+  :root[data-theme="light"] .konami-code h2 {
+    color: #0d5f0d !important;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5) !important;
+  }
+
+  @keyframes konamiGradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Scanlines overlay for CRT effect - subtle */
+  .konami-code::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.03),
+      rgba(0, 0, 0, 0.03) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+    opacity: 0;
+    animation: fadeInScanlines 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  /* CRT vignette effect */
+  .konami-code::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9998;
+    background: radial-gradient(
+      ellipse at center,
+      transparent 0%,
+      transparent 60%,
+      rgba(0, 0, 0, 0.4) 100%
+    );
+    opacity: 0;
+    animation: fadeInVignette 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  @keyframes fadeInScanlines {
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeInVignette {
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Neon glow effect on cards in konami mode */
+  .konami-code .card-modern {
+    border: 1px solid rgba(103, 234, 148, 0.5) !important;
+    box-shadow: 
+      0 0 10px rgba(103, 234, 148, 0.3),
+      0 0 20px rgba(103, 234, 148, 0.1),
+      inset 0 0 20px rgba(103, 234, 148, 0.05) !important;
+    animation: neonPulse 2s ease-in-out infinite !important;
+  }
+
+  @keyframes neonPulse {
+    0%, 100% {
+      box-shadow: 
+        0 0 10px rgba(103, 234, 148, 0.3),
+        0 0 20px rgba(103, 234, 148, 0.1),
+        inset 0 0 20px rgba(103, 234, 148, 0.05);
+    }
+    50% {
+      box-shadow: 
+        0 0 15px rgba(103, 234, 148, 0.5),
+        0 0 30px rgba(103, 234, 148, 0.2),
+        inset 0 0 25px rgba(103, 234, 148, 0.1);
+    }
+  }
+
+  /* Retro pixel-style text shadow on headings */
+  .konami-code h2 {
+    text-shadow: 
+      2px 2px 0 rgba(103, 234, 148, 0.3),
+      -1px -1px 0 rgba(0, 0, 0, 0.5) !important;
+  }
+
+  /* Glowing buttons in konami mode */
+  .konami-code .btn-primary,
+  .konami-code .btn-secondary {
+    box-shadow: 0 0 10px rgba(103, 234, 148, 0.4) !important;
+  }
+
+  .konami-code .btn-primary:hover,
+  .konami-code .btn-secondary:hover {
+    box-shadow: 0 0 20px rgba(103, 234, 148, 0.6) !important;
+  }
+
+  .invert {
     -webkit-filter: invert(1);
     filter: invert(1);
   }
   .text-meshtastic {
-    color: #67EA94;
+    color: var(--primary-color);
   }
   .bg-meshtastic {
-    background-color: #67EA94;
+    background-color: var(--primary-color);
   }
   .border-meshtastic {
-    border-color: #67EA94;
+    border-color: var(--primary-color);
+  }
+  .title-doto {
+    font-family: 'Doto', sans-serif;
+    text-transform: uppercase;
   }
   .bottom-button {
-    @apply flex items-center justify-center gap-1;
-    @apply font-medium text-xs text-center rounded-lg px-4 py-2 me-2 mb-2 border;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5;
+    @apply text-sm font-semibold text-center rounded-lg border border-meshtastic text-meshtastic;
     @apply hover:text-black hover:bg-white hover:border-transparent hover:shadow transition duration-300 ease-in-out;
-    @apply focus:ring-4 focus:outline-none;
+    @apply focus:ring-4 focus:outline-none focus:ring-gray-300;
   }
   .footer {
-    background-color: #2C2D3C;
+    background-color: var(--bg-color);
   }
   .footer a:hover {
     text-decoration: underline;
   }
   h1 {
     font-size: 2em;
-    color: #FFFFFF;
+    color: var(--text-default);
   }
   h2 {
     font-size: 1.5em;
-    color: #FFFFFF;
+    color: var(--text-default);
   }
   .unsupported-browser-warning {
     background-color: #ffcc00;
@@ -251,6 +581,63 @@ onMounted(() => {
   .flash-enter-from,
   .flash-leave-to {
     transition: all 1s ease-out;
+    opacity: 0;
+  }
+
+  /* Konami Code Key Animation */
+  .key-animation {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: keyFly 1s ease-out forwards;
+  }
+
+  @keyframes keyFly {
+    0% {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-120px) scale(0.8);
+    }
+  }
+
+  .key-display {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, rgba(103, 234, 148, 0.3), rgba(103, 234, 148, 0.1));
+    border: 2px solid rgba(103, 234, 148, 0.6);
+    border-radius: 8px;
+    color: rgb(103, 234, 148);
+    font-weight: bold;
+    font-size: 20px;
+    box-shadow: 0 0 20px rgba(103, 234, 148, 0.4), inset 0 0 10px rgba(103, 234, 148, 0.1);
+    text-shadow: 0 0 10px rgba(103, 234, 148, 0.6);
+  }
+
+  .key-display.key-failed {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(239, 68, 68, 0.1));
+    border: 2px solid rgba(239, 68, 68, 0.6);
+    color: rgb(239, 68, 68);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.4), inset 0 0 10px rgba(239, 68, 68, 0.1);
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+  }
+
+  .key-fly-enter-active,
+  .key-fly-leave-active {
+    transition: none;
+  }
+
+  .key-fly-enter-from,
+  .key-fly-leave-to {
     opacity: 0;
   }
 </style>

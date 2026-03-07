@@ -1,23 +1,78 @@
 // nuxt.config.ts
-import { defineNuxtConfig } from 'nuxt/config';
-import nodePolyfills from 'vite-plugin-node-stdlib-browser';
+import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
+
+  modules: ['@pinia/nuxt', '@vite-pwa/nuxt', '@nuxtjs/i18n', '@nuxt/eslint'],
+
+  ssr: false,
   devtools: { enabled: true },
+
+  app: {
+    head: {
+      script: process.env.COOKIEYES_CLIENT_ID
+        ? [
+            {
+              src: `https://cdn-cookieyes.com/client_data/${process.env.COOKIEYES_CLIENT_ID}/script.js`,
+              async: true,
+            },
+          ]
+        : [],
+    },
+  },
+  css: ['~/assets/css/main.css'],
+
+  runtimeConfig: {
+    public: {
+      datadogApplicationId: process.env.DATADOG_APPLICATION_ID || '',
+      datadogClientToken: process.env.DATADOG_CLIENT_TOKEN || '',
+      datadogEnv: process.env.NODE_ENV || 'production',
+      cookieyesClientId: process.env.COOKIEYES_CLIENT_ID || '',
+    },
+  },
 
   routeRules: {
     // prerender index route by default
     '/': { prerender: true },
   },
 
-  ssr: false,
-  css: ['~/assets/css/main.css'],
+  compatibilityDate: '2024-09-03',
 
-  modules: [
-    '@pinia/nuxt',
-    '@vite-pwa/nuxt',
-    '@nuxtjs/i18n',
-  ],
+  vite: {
+    plugins: [],
+    server: {
+      hmr: {
+        overlay: true, // Enable HMR overlay for errors
+      },
+      proxy: {
+        '^/api/.*': {
+          target: 'https://api.meshtastic.org/',
+          changeOrigin: true,
+          followRedirects: true,
+          rewrite: path => path.replace(/^\/api/, ''),
+          secure: false,
+          headers: {
+            Accept: 'application/octet-stream',
+            Origin: 'https://flash.meshtastic.org',
+            Referer: 'https://flash.meshtastic.org/',
+          },
+        },
+      },
+    },
+  },
+
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {},
+    },
+  },
+  eslint: {
+    config: {
+      stylistic: true,
+      typescript: true,
+    },
+  },
   i18n: {
     locales: [
       {
@@ -91,6 +146,11 @@ export default defineNuxtConfig({
         file: 'sv.json',
       },
       {
+        code: 'uk',
+        name: 'Українська',
+        file: 'uk.json',
+      },
+      {
         code: 'tr',
         name: 'Türkçe',
         file: 'tr.json',
@@ -110,6 +170,7 @@ export default defineNuxtConfig({
     lazy: true,
     langDir: 'locales/',
     strategy: 'no_prefix',
+    vueI18n: '../i18n.config.ts',
     bundle: {
       optimizeTranslationDirective: false,
     },
@@ -123,39 +184,4 @@ export default defineNuxtConfig({
   pwa: {
     /* PWA options */
   },
-
-  postcss: {
-    plugins: {
-      tailwindcss: {},
-      autoprefixer: {},
-    },
-  },
-
-  vite: {
-    plugins: [
-      nodePolyfills(),
-    ],
-    server: {
-      hmr: {
-        overlay: true, // Enable HMR overlay for errors
-      },
-      proxy: {
-        "^/api/.*": {
-          target:
-            "https://api.meshtastic.org/",
-          changeOrigin: true,
-          followRedirects: true,
-          rewrite: (path) => path.replace(/^\/api/, ""),
-          secure: false,
-          headers: {
-            Accept: "application/octet-stream",
-            Origin: 'https://flash.meshtastic.org',
-            Referer: 'https://flash.meshtastic.org/'
-          },
-        }
-      }
-    }
-  },
-
-  compatibilityDate: '2024-09-03',
-});
+})

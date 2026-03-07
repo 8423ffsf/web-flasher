@@ -2,28 +2,7 @@ import type { FirmwareResource } from './api';
 
 // Remove the OfflineHardwareList since it's now in /public/data/hardware-list.json
 
-const markdownContent = `
-
-## 🚀 Enhancements
-* Fast fix, remove saving tx power inside limitPower() by @mrekin in https://github.com/meshtastic/firmware/pull/7255
-* Show user which Clock Face option is currently elected by @Xaositek in https://github.com/meshtastic/firmware/pull/7271
-* Heltec Wireless Paper, VM-E213 Hardware Revisions by @todd-herbert in https://github.com/meshtastic/firmware/pull/7258
-
-## 🐛 Bug fixes and maintenance
-* Add HWIDs for T1000-E in DFU mode by @thebentern in https://github.com/meshtastic/firmware/pull/7235
-* chore(deps): update meshtastic/device-ui digest to 8c7092c by @renovate in https://github.com/meshtastic/firmware/pull/7238
-* Automatically bail user out of displaymode_color when not HAS_TFT by @jp-bennett in https://github.com/meshtastic/firmware/pull/7248
-* Don't run bluetooth gerFromRadio() unless the phone has requested a packet by @jp-bennett in https://github.com/meshtastic/firmware/pull/7231
-* Try-fix: L76K spamming bad times can crash nodes by @thebentern in https://github.com/meshtastic/firmware/pull/7261
-* Fix install script by @Pitel in https://github.com/meshtastic/firmware/pull/7259
-* Modules and favorite screen fix by @HarukiToreda in https://github.com/meshtastic/firmware/pull/7264
-* TFT_MESH Fixes Across Various Devices by @Xaositek in https://github.com/meshtastic/firmware/pull/7247
-* Update Bluetooth Toggle to match other variants by @Xaositek in https://github.com/meshtastic/firmware/pull/7269
-* Make PacketHistory logging less chatty by @thebentern in https://github.com/meshtastic/firmware/pull/7272
-* GitHub Actions faster!! (again) by @vidplace7 in https://github.com/meshtastic/firmware/pull/7268
-`;
-
-const currentPrereleaseId = '2.7.2.f6d3782';
+const currentPrereleaseId = '2.7.19.bb3d6d5';
 
 export const showPrerelease = false;
 
@@ -31,8 +10,50 @@ export const currentPrerelease = <FirmwareResource>{
   id: `v${currentPrereleaseId}`,
   title: `Meshtastic Firmware ${currentPrereleaseId} Pre-release`,
   zip_url: `https://github.com/meshtastic/firmware/releases/download/v${currentPrereleaseId}/firmware-${currentPrereleaseId}.zip`,
-  release_notes: markdownContent,
+};
+
+// Event Mode Configuration
+// Set enabled to true to lock the flasher to a specific firmware for events
+export interface EventModeConfig {
+  enabled: boolean;
+  eventName: string;
+  eventTag: string;
+  firmware: FirmwareResource;
+}
+
+const eventFirmwareId = '2.7.18.7e03cae';
+
+const eventReleaseNotes = `
+## Welcome to Orlando Hamcation 2026!
+
+This firmware has been customized for Hamcation with factory default configurations.
+
+### ⚠️ Important: Backup Before Flashing
+
+If your device has existing settings or encryption keys, **backup your keys / configurations** before proceeding. Flashing will reset your device to factory settings for the event.
+
+### Quick Start
+
+1. Ensure a **data-capable USB cable** is connected
+2. Select your device type
+3. Choose "Full Erase and Install"
+4. After flashing, download the Meshtastic app and pair via Bluetooth
+5. If you updated from a previous version or installed a UF2 on an NRF52 device, you will need to perform a factory reset on the device to activate the Hamcation mode.
+
+**73 and happy meshing!**
+`;
+
+export const eventMode: EventModeConfig = {
+  enabled: false,
+  eventName: 'Orlando Hamcation 2026',
+  eventTag: 'Hamcation',
+  firmware: {
+    id: `v${eventFirmwareId}`,
+    title: `Meshtastic Firmware ${eventFirmwareId}`,
+    zip_url: `https://github.com/meshtastic/meshtastic.github.io/raw/master/event/hamcation2026/firmware-${eventFirmwareId}.zip`,
+    release_notes: eventReleaseNotes,
+  },
 };
 
 export const vendorCobrandingTag = "";
-export const supportedVendorDeviceTags = ["RAK", "B&Q", "LilyGo", "Seeed", "Heltec", "DIY", "Elecrow"];
+export const supportedVendorDeviceTags = ["RAK", "B&Q", "LilyGo", "Seeed", "Heltec", "DIY", "Elecrow", "M5Stack", "NomadStar", "muzi"];

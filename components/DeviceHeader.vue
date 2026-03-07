@@ -1,17 +1,30 @@
 <template>
-    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t order-gray-600">
-        <h3 class="text-xl font-semibold text-white">
-            {{ $t('device.header') }}
-        </h3>
-        <button type="button"
-            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center hover:bg-gray-600 hover:text-white"
-            data-modal-toggle="device-modal">
-            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                viewBox="0 0 14 14">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-            </svg>
-            <span class="sr-only">{{ $t('actions.close_dialog') }}</span>
-        </button>
+  <div class="device-header sticky top-0 z-10 flex items-center justify-between p-3 sm:p-4 md:p-5 rounded-t">
+    <!-- Icon + title -->
+    <div class="flex items-center gap-3">
+      <div class="flash-header-icon">
+        <Plug class="w-5 h-5 text-meshtastic" />
+      </div>
+      <h3 class="text-base sm:text-lg font-semibold text-theme">
+        {{ $t('device.header') }}
+      </h3>
     </div>
+
+    <!-- Close button with glow -->
+    <button
+      type="button"
+      class="device-header-close"
+      data-modal-toggle="device-modal"
+    >
+      <X class="w-4 h-4" />
+      <span class="sr-only">{{ $t('actions.close_dialog') }}</span>
+    </button>
+
+    <!-- Gradient accent line -->
+    <div class="device-header-accent"></div>
+  </div>
 </template>
+
+<script setup>
+import { X, Plug } from 'lucide-vue-next'
+</script>

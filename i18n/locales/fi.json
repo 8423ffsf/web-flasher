@@ -3,13 +3,16 @@
   "header": "Flasher",
   "description": "Web-pohjainen työkalu ESP32 laiteohjelmiston ohjelmoimiseen",
   "browser_warning": "Selaimesi ei tue WebSerial (API) käyttöliittymää. Vaihda yhteensopivaan selaimeen, kuten Chromeen tai Edgeen.",
-  "header_title": "FLASHER",
+  "header_title": "Meshtastic Web Flasher",
   "language": "Kieli",
   "actions": {
     "connect": "Yhdistä",
     "disconnect": "Katkaise",
     "continue": "Jatka",
-    "close_dialog": "Sulje valintaikkuna"
+    "close_dialog": "Sulje valintaikkuna",
+    "dismiss": "Hylkää",
+    "close": "Sulje",
+    "reload": "Lataa uudelleen"
   },
   "state": {
     "connected": "Yhdistetty",
@@ -105,6 +108,10 @@
   "serial": {
     "instructions": "Jos yhteyden katkaiseminen kestää liian kauan, voit poistaa laitteen manuaalisesti.",
     "disconnect": "Katkaise",
+    "reconnect": "Yritä muodostaa yhteys uudelleen",
+    "waiting_for_data": "Odotetaan tietoja...",
+    "busy_title": "Sarjaportti varattu",
+    "busy_message": "Sarjayhteys on jo avoinna. Sulje se ennen jatkamista.",
     "log_levels": {
       "all": "Kaikki",
       "debug": "Vianetsintä",
@@ -112,5 +119,15 @@
       "warn": "Varoitus",
       "error": "Virhe"
     }
+  },
+  "dfu": {
+    "success_title": "DFU-tila",
+    "success_message": "Laite siirtyi onnistuneesti DFU-tilaan",
+    "error_title": "DFU-tilaan siirtyminen epäonnistui",
+    "error_message": "DFU-tilaan siirtyminen epäonnistui. Irrota ja liitä laite uudelleen ja yritä sitten uudelleen. Jos ongelma jatkuu, lataa sivu uudelleen.",
+    "error_connection_title": "Laitteeseen yhdistäminen epäonnistui",
+    "error_connection": "Laitteeseen yhdistäminen epäonnistui tai laite saattaa jo olla DFU-tilassa. Irrota ja liitä laite uudelleen ja yritä sitten uudelleen. Jos ongelma jatkuu, lataa sivu uudelleen.",
+    "error_unresponsive_title": "Laite ei vastaa",
+    "error_unresponsive": "Laite ei vastaa. Varmista, että se on kunnolla kytketty, eikä DFU-tilassa. Jos ongelma jatkuu, lataa sivu uudelleen."
   }
 }
