@@ -72,7 +72,7 @@ describe('firmwareUrl', () => {
   describe('GITHUB_IO_BASE', () => {
     it('has the correct base URL', () => {
       console.log(`[BASE URL] GITHUB_IO_BASE = ${GITHUB_IO_BASE}`)
-      expect(GITHUB_IO_BASE).toBe('https://raw.githubusercontent.com/meshtastic/meshtastic.github.io/master')
+      expect(GITHUB_IO_BASE).toBe('https://raw.githubusercontent.com/meshcn/meshtastic.github.io/master')
     })
   })
 })
