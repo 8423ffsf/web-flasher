@@ -9,7 +9,7 @@ export const showPrerelease = false;
 export const currentPrerelease = <FirmwareResource>{
   id: `v${currentPrereleaseId}`,
   title: `Meshtastic Firmware ${currentPrereleaseId} Pre-release`,
-  zip_url: `https://github.com/meshtastic/firmware/releases/download/v${currentPrereleaseId}/firmware-${currentPrereleaseId}.zip`,
+  zip_url: `https://github.com/chinamesh/MeshCN-Variant/releases/download/v${currentPrereleaseId}/firmware-${currentPrereleaseId}.zip`,
 };
 
 // Event Mode Configuration

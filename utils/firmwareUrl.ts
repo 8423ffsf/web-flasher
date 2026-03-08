@@ -1,6 +1,6 @@
 import { eventMode } from '~/types/resources'
 
-export const GITHUB_IO_BASE = 'https://raw.githubusercontent.com/meshcn/meshtastic.github.io/master'
+export const GITHUB_IO_BASE = 'https://raw.githubusercontent.com/chinamesh/meshtastic.github.io/master'
 
 /**
  * Determine the correct base path for a firmware version
